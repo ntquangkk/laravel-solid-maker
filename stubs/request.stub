@@ -1,0 +1,20 @@
+<?php
+{{AUTO_GEN_FLAG}}
+namespace {{appNamespace}}\Http\Requests;
+
+use Illuminate\Foundation\Http\FormRequest;
+
+class {{type}}{{model}}Request extends FormRequest
+{
+    public function authorize()
+    {
+        return true;
+    }
+
+    public function rules()
+    {
+        return [
+            "name" => ["required", "string", "max:255"],
+        ];
+    }
+}

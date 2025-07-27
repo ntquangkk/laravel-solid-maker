@@ -1,0 +1,37 @@
+<?php
+{{AUTO_GEN_FLAG}}
+namespace {{appNamespace}}\Policies;
+
+use App\Models\User;
+use {{appNamespace}}\Models\{{model}};
+use Illuminate\Auth\Access\HandlesAuthorization;
+
+class {{model}}Policy
+{
+    use HandlesAuthorization;
+
+    public function viewAny(User $user)
+    {
+        return false;
+    }
+
+    public function view(User $user, {{model}} ${{modelVar}})
+    {
+        return false;
+    }
+
+    public function create(User $user)
+    {
+        return false;
+    }
+
+    public function update(User $user, {{model}} ${{modelVar}})
+    {
+        return false;
+    }
+
+    public function delete(User $user, {{model}} ${{modelVar}})
+    {
+        return false;
+    }
+}

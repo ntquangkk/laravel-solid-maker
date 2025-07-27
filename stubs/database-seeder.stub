@@ -1,0 +1,16 @@
+<?php
+{{AUTO_GEN_FLAG}}
+namespace {{baseNamespaceSlash}}Database\Seeders;
+
+use Illuminate\Database\Seeder;
+
+class {{module}}DatabaseSeeder extends Seeder
+{
+    /**
+     * Seed the application's database.
+     */
+    public function run(): void
+    {
+        {{SEEDER_CALLS}}
+    }
+}

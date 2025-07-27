@@ -1,0 +1,89 @@
+<?php
+{{AUTO_GEN_FLAG}}
+namespace {{baseNamespaceSlash}}Tests\Unit;
+
+use {{appNamespace}}\Models\{{model}};
+use {{appNamespace}}\Services\{{model}}Service;
+use {{appNamespace}}\Repositories\Contracts\{{model}}RepositoryInterface;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Mockery;
+use Tests\TestCase;
+
+class {{model}}ServiceTest extends TestCase
+{
+    use RefreshDatabase;
+
+    protected ${{modelVar}}Service;
+    protected $repositoryMock;
+
+    public function setUp(): void
+    {
+        parent::setUp();
+        $this->repositoryMock = Mockery::mock({{model}}RepositoryInterface::class);
+        $this->{{modelVar}}Service = new {{model}}Service($this->repositoryMock);
+    }
+
+    public function tearDown(): void
+    {
+        Mockery::close();
+        parent::tearDown();
+    }
+
+    public function test_get_all()
+    {
+        $collection = new \Illuminate\Database\Eloquent\Collection([new {{model}}(), new {{model}}()]);
+        $this->repositoryMock->shouldReceive("getAll")->once()->andReturn($collection);
+
+        $result = $this->{{modelVar}}Service->getAll();
+
+        $this->assertEquals($collection, $result);
+        $this->markTestIncomplete("{{TEST_INCOMPLETE}}");
+    }
+
+    public function test_find()
+    {
+        $id = 1;
+        $model = new {{model}}();
+        $this->repositoryMock->shouldReceive("find")->with($id)->once()->andReturn($model);
+
+        $result = $this->{{modelVar}}Service->find($id);
+
+        $this->assertEquals($model, $result);
+        $this->markTestIncomplete("{{TEST_INCOMPLETE}}");
+    }
+
+    public function test_create()
+    {
+        $data = ["name" => "Test"];
+        $model = new {{model}}();
+        $this->repositoryMock->shouldReceive("create")->with($data)->once()->andReturn($model);
+
+        $result = $this->{{modelVar}}Service->create($data);
+
+        $this->assertEquals($model, $result);
+        $this->markTestIncomplete("{{TEST_INCOMPLETE}}");
+    }
+
+    public function test_update()
+    {
+        $data = ["name" => "Updated"];
+        $model = new {{model}}();
+        $this->repositoryMock->shouldReceive("update")->with($model, $data)->once()->andReturn($model);
+
+        $result = $this->{{modelVar}}Service->update($model, $data);
+
+        $this->assertEquals($model, $result);
+        $this->markTestIncomplete("{{TEST_INCOMPLETE}}");
+    }
+
+    public function test_delete()
+    {
+        $model = new {{model}}();
+        $this->repositoryMock->shouldReceive("delete")->with($model)->once()->andReturn(true);
+
+        $result = $this->{{modelVar}}Service->delete($model);
+
+        $this->assertTrue($result);
+        $this->markTestIncomplete("{{TEST_INCOMPLETE}}");
+    }
+}

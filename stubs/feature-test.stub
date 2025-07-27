@@ -1,0 +1,62 @@
+<?php
+{{AUTO_GEN_FLAG}}
+namespace {{baseNamespaceSlash}}Tests\Feature;
+
+use {{appNamespace}}\Models\{{model}};
+use {{appNamespace}}\Services\{{model}}Service;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
+
+class {{model}}Test extends TestCase
+{
+    use RefreshDatabase;
+
+    protected $service;
+
+    public function setUp(): void
+    {
+        parent::setUp();
+        $this->service = app({{model}}Service::class);
+    }
+
+    public function test_can_get_all()
+    {
+        ${{modelVar}} = {{model}}::factory()->create();
+        $response = $this->get("/api/" . strtolower("{{modelPlural}}"));
+        $response->assertStatus(200);
+        $this->markTestIncomplete("{{TEST_INCOMPLETE}}");
+    }
+
+    public function test_can_create()
+    {
+        $data = ["name" => "Test"];
+        $response = $this->post("/api/" . strtolower("{{modelPlural}}"), $data);
+        $response->assertStatus(201);
+        $this->markTestIncomplete("{{TEST_INCOMPLETE}}");
+    }
+
+    public function test_can_show()
+    {
+        ${{modelVar}} = {{model}}::factory()->create();
+        $response = $this->get("/api/" . strtolower("{{modelPlural}}") . "/${{modelVar}}->id");
+        $response->assertStatus(200);
+        $this->markTestIncomplete("{{TEST_INCOMPLETE}}");
+    }
+
+    public function test_can_update()
+    {
+        ${{modelVar}} = {{model}}::factory()->create();
+        $data = ["name" => "Updated"];
+        $response = $this->put("/api/" . strtolower("{{modelPlural}}") . "/${{modelVar}}->id", $data);
+        $response->assertStatus(200);
+        $this->markTestIncomplete("{{TEST_INCOMPLETE}}");
+    }
+
+    public function test_can_delete()
+    {
+        ${{modelVar}} = {{model}}::factory()->create();
+        $response = $this->delete("/api/" . strtolower("{{modelPlural}}") . "/${{modelVar}}->id");
+        $response->assertStatus(204);
+        $this->markTestIncomplete("{{TEST_INCOMPLETE}}");
+    }
+}

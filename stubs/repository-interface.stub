@@ -1,0 +1,23 @@
+<?php
+{{AUTO_GEN_FLAG}}
+namespace {{appNamespace}}\Repositories\Contracts;
+
+use Illuminate\Database\Eloquent\Collection;
+
+interface {{model}}RepositoryInterface
+{
+    {{AUTO_GEN_TAG}}
+    public function getAll(): Collection;
+
+    {{AUTO_GEN_TAG}}
+    public function find($id);
+
+    {{AUTO_GEN_TAG}}
+    public function create(array $data);
+
+    {{AUTO_GEN_TAG}}
+    public function update($model, array $data);
+
+    {{AUTO_GEN_TAG}}
+    public function delete($model);
+}

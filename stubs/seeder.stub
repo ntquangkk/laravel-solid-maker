@@ -1,0 +1,15 @@
+<?php
+{{AUTO_GEN_FLAG}}
+namespace {{baseNamespaceSlash}}Database\Seeders;
+
+use {{appNamespace}}\Models\{{model}};
+use Illuminate\Database\Seeder;
+
+class {{model}}Seeder extends Seeder
+{
+    {{AUTO_GEN_TAG}}
+    public function run()
+    {
+        {{model}}::factory()->count(10)->create();
+    }
+}

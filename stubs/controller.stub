@@ -1,0 +1,54 @@
+<?php
+{{AUTO_GEN_FLAG}}
+namespace {{appNamespace}}\Http\Controllers;
+
+use App\Http\Controllers\Controller;
+use {{appNamespace}}\Services\{{model}}Service;
+use {{appNamespace}}\Http\Requests\Store{{model}}Request;
+use {{appNamespace}}\Http\Requests\Update{{model}}Request;
+use {{appNamespace}}\Http\Resources\{{model}}Resource;
+
+class {{model}}Controller extends Controller
+{
+    protected ${{modelVar}}Service;
+
+    public function __construct({{model}}Service ${{modelVar}}Service)
+    {
+        $this->{{modelVar}}Service = ${{modelVar}}Service;
+        $this->authorizeResource({{model}}::class);
+    }
+
+    {{AUTO_GEN_TAG}}
+    public function index()
+    {
+        $items = $this->{{modelVar}}Service->getAll();
+        return {{model}}Resource::collection($items);
+    }
+
+    {{AUTO_GEN_TAG}}
+    public function store(Store{{model}}Request $request)
+    {
+        $item = $this->{{modelVar}}Service->create($request->validated());
+        return {{model}}Resource::make($item);
+    }
+
+    {{AUTO_GEN_TAG}}
+    public function show({{model}} ${{modelVar}})
+    {
+        return {{model}}Resource::make(${{modelVar}});
+    }
+
+    {{AUTO_GEN_TAG}}
+    public function update(Update{{model}}Request $request, {{model}} ${{modelVar}})
+    {
+        $item = $this->{{modelVar}}Service->update(${{modelVar}}, $request->validated());
+        return {{model}}Resource::make($item);
+    }
+
+    {{AUTO_GEN_TAG}}
+    public function destroy({{model}} ${{modelVar}})
+    {
+        $this->{{modelVar}}Service->delete(${{modelVar}});
+        return response()->noContent();
+    }
+}

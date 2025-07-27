@@ -1,0 +1,45 @@
+<?php
+{{AUTO_GEN_FLAG}}
+namespace {{appNamespace}}\Services;
+
+use {{appNamespace}}\Repositories\Contracts\{{model}}RepositoryInterface;
+
+class {{model}}Service
+{
+    protected $repository;
+
+    public function __construct({{model}}RepositoryInterface $repository)
+    {
+        $this->repository = $repository;
+    }
+
+    {{AUTO_GEN_TAG}}
+    public function getAll()
+    {
+        return $this->repository->getAll();
+    }
+
+    {{AUTO_GEN_TAG}}
+    public function find($id)
+    {
+        return $this->repository->find($id);
+    }
+
+    {{AUTO_GEN_TAG}}
+    public function create(array $data)
+    {
+        return $this->repository->create($data);
+    }
+
+    {{AUTO_GEN_TAG}}
+    public function update($model, array $data)
+    {
+        return $this->repository->update($model, $data);
+    }
+
+    {{AUTO_GEN_TAG}}
+    public function delete($model)
+    {
+        return $this->repository->delete($model);
+    }
+}

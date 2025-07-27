@@ -1,0 +1,48 @@
+<?php
+{{AUTO_GEN_FLAG}}
+namespace {{appNamespace}}\Repositories\Eloquent;
+
+use {{appNamespace}}\Models\{{model}};
+use {{appNamespace}}\Repositories\Contracts\{{model}}RepositoryInterface;
+use Illuminate\Database\Eloquent\Collection;
+
+class {{model}}Repository implements {{model}}RepositoryInterface
+{
+    protected $model;
+
+    public function __construct({{model}} $model)
+    {
+        $this->model = $model;
+    }
+
+    {{AUTO_GEN_TAG}}
+    public function getAll(): Collection
+    {
+        return $this->model->all();
+    }
+
+    {{AUTO_GEN_TAG}}
+    public function find($id)
+    {
+        return $this->model->findOrFail($id);
+    }
+
+    {{AUTO_GEN_TAG}}
+    public function create(array $data)
+    {
+        return $this->model->create($data);
+    }
+
+    {{AUTO_GEN_TAG}}
+    public function update($model, array $data)
+    {
+        $model->update($data);
+        return $model;
+    }
+
+    {{AUTO_GEN_TAG}}
+    public function delete($model)
+    {
+        return $model->delete();
+    }
+}
