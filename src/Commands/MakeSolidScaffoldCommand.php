@@ -132,7 +132,12 @@ class MakeSolidScaffoldCommand extends Command
     protected function createMigration()
     {
         $table = Str::snake($this->modelPlural);
-        $path = database_path('migrations/' . date('Y_m_d_His') . "_create_{$table}_table.php");
+        $timestamp = date('Y_m_d_His');
+        $filename = "{$timestamp}_create_{$table}_table.php";
+
+        $path = $this->module
+            ? $this->basePath . "/Database/Migrations/{$filename}"
+            : database_path("migrations/{$filename}");
 
         if (! $this->files->exists($path)) {
             $stub = $this->getStub('migration');
