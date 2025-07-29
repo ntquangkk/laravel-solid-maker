@@ -15,7 +15,7 @@ class MakeSolidScaffoldCommand extends Command
     private const TEST_INCOMPLETE = 'AUTO-GEN: Placeholder - Incomplete test.';
     private const PUBLISHED_STUB_PATH = 'stubs/vendor/triquang/laravel-solid-maker';
 
-    protected $signature = 'make:solid-files {--model= : Model name} {--module= : Module name} {--view : Generate view routes}';
+    protected $signature = 'make:solid-scaffold {--model= : Model name} {--module= : Module name} {--view : Generate view routes}';
 
     protected $description = 'Generate SOLID architecture files for a model';
 
