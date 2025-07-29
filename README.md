@@ -1,5 +1,9 @@
 # Laravel Solid Maker
 
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/triquang/laravel-solid-maker.svg?style=flat-square)](https://packagist.org/packages/triquang/laravel-solid-maker)
+[![Total Downloads](https://img.shields.io/packagist/dt/triquang/laravel-solid-maker.svg?style=flat-square)](https://packagist.org/packages/triquang/laravel-solid-maker)
+[![License](https://img.shields.io/packagist/l/triquang/laravel-solid-maker.svg?style=flat-square)](https://github.com/ntquangkk/laravel-solid-maker?tab=MIT-1-ov-file)
+
 **Laravel Solid Maker** is a developer-friendly package for Laravel that allows you to quickly scaffold SOLID-structured boilerplate code across key architectural layers.
 
 It supports both **standard Laravel** and **modular Laravel** architectures (e.g., using `nwidart/laravel-modules`).
@@ -30,9 +34,13 @@ It supports both **standard Laravel** and **modular Laravel** architectures (e.g
 - Feature Test
 
 ### Binding
-- Auto-binds interfaces to implementations in:
-  - `RepositoryServiceProvider`
-  - `bootstrap/app.php` (for modular Laravel)
+- Interface bindings:
+  - `*RepositoryServiceProvider`
+    - Registered in `bootstrap/providers.php` (for standard Laravel; first time only, if needed)
+    - Registered in `module.json` (for modular Laravel; first time only, if needed)
+- Auto-registrations:
+  - `*DatabaseSeeder`
+  - `*routes/api.php`
 
 ---
 
@@ -68,7 +76,7 @@ stubs/vendor/triquang/laravel-solid-maker
 Generate a full set of SOLID-style files with:
 
 ```bash
-php artisan make:solid-files --model=YourModelName [--module=YourModuleName] [--view]
+php artisan make:solid-scaffold --model=YourModelName [--module=YourModuleName] [--view]
 ```
 
 ### Options
@@ -82,17 +90,68 @@ php artisan make:solid-files --model=YourModelName [--module=YourModuleName] [--
 ### Example
 
 ```bash
-php artisan make:solid-files --model=Post --module=Blog
+php artisan make:solid-scaffold --model=Post --module=Blog
 ```
 
 This will generate and register:
 
 - **Database Layer**: Model, Migration, Factory, Seeder  
 - **Request Layer**: Store & Update Form Requests  
-- **Presentation Layer**: Controller, Resource, Policy, Routes  
+- **Presentation Layer**: Controller, Resource, Policy  
 - **Business Logic**: Service, Repository, Interface  
 - **Testing**: Unit Test, Feature Test  
-- **Bindings**: Registered in `RepositoryServiceProvider`
+- **Bindings & Registrations**: 
+  - `RepositoryServiceProvider`
+  - `BlogDatabaseSeeder`
+  - `module.json`
+  - `routes/api.php`
+
+#### 📁 Folder Structure
+
+Create `Post` SOLID scaffold in `Modules\Blog`
+
+```bash
+Modules
+└── Blog
+    ├── app
+    │   ├── Http
+    │   │   ├── Controllers
+    │   │   │   └── PostController.php
+    │   │   ├── Requests
+    │   │   │   ├── StorePostRequest.php
+    │   │   │   └── UpdatePostRequest.php
+    │   │   └── Resources
+    │   │       └── PostResource.php
+    │   ├── Models
+    │   │   └── Post.php
+    │   ├── Policies
+    │   │   └── PostPolicy.php
+    │   ├── Providers
+    │   │   └── RepositoryServiceProvider.php          // register or create
+    │   ├── Repositories
+    │   │   ├── Contracts
+    │   │   │   └── PostRepositoryInterface.php
+    │   │   └── Eloquent
+    │   │       └── PostRepository.php
+    │   └── Services
+    │       └── PostService.php
+    ├── database
+    │   ├── factories
+    │   │   └── PostFactory.php
+    │   ├── migrations
+    │   │   └── YYYY_mm_dd_His_create_posts_table.php
+    │   └── seeders
+    │       ├── BlogDatabaseSeeder.php                  // register or create
+    │       └── PostSeeder.php
+    ├── module.json                                     // register or create
+    ├── routes
+    │   └── api.php                                     // register or create
+    └── tests
+        ├── Feature
+        │   └── PostTest.php
+        └── Unit
+            └── PostServiceTest.php
+```
 
 ---
 
@@ -128,10 +187,31 @@ public function getAll()
 - `// AUTO-GEN: Placeholder`
 - `AUTO-GEN: Placeholder - Incomplete test.`
 
-You can quickly search these markers (`Ctrl+F`) to locate auto-generated code and **remove them after review**.
+You can quickly search these markers (`Ctrl/Cmd+Shift+F`) to locate auto-generated code and **remove them after review**.
+
+---
+
+## ✅ Requirements
+
+- PHP >= 8.0
+- Laravel 11 / 12
+- Composer
 
 ---
 
 ## 📄 License
 
-This package is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+MIT © [Nguyễn Trí Quang](mailto:ntquangkk@gmail.com)
+
+---
+
+## 🙌 Contributing
+
+PRs are welcome! Feel free to improve functionality or report issues via GitHub Issues.
+
+---
+
+## 📬 Contact
+
+- GitHub: [github.com/ntquangkk](https://github.com/ntquangkk)
+- Email: [ntquangkk@gmail.com](mailto:ntquangkk@gmail.com)
