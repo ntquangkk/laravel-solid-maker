@@ -7,7 +7,7 @@ use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
-class MakeSolidCommand extends Command
+class MakeSolidScaffoldCommand extends Command
 {
     private const AUTO_GEN_FLAG = '// AUTO-GEN-4-SOLID';
     private const AUTO_GEN_TAG = '// AUTO-GEN: Placeholder';

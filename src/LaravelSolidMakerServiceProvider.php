@@ -3,7 +3,7 @@
 namespace TriQuang\LaravelSolidMaker;
 
 use Illuminate\Support\ServiceProvider;
-use TriQuang\LaravelSolidMaker\Commands\MakeSolidCommand;
+use TriQuang\LaravelSolidMaker\Commands\MakeSolidScaffoldCommand;
 
 class LaravelSolidMakerServiceProvider extends ServiceProvider
 {
@@ -12,7 +12,7 @@ class LaravelSolidMakerServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             // Register the command
             $this->commands([
-                MakeSolidCommand::class,
+                MakeSolidScaffoldCommand::class,
             ]);
 
             // Publish stubs for customization
