@@ -14,5 +14,11 @@ class {{model}} extends Model
         return \{{baseNamespaceSlash}}Database\Factories\{{model}}Factory::new();
     }
 
-    protected $fillable = ["name"];
+    protected $fillable = [
+        'name',
+    ];
+
+    protected $hidden = [];
+
+    protected $casts = [];
 }

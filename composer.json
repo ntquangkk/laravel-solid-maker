@@ -1,7 +1,7 @@
 {
   "name": "triquang/laravel-solid-maker",
-  "description": "A Laravel package to generate SOLID-structured scaffolding (Service, Repository, Interface, Tests, etc.)",
-  "version": "2.0.0",
+  "description": "Generate SOLID-based scaffolding (Service, Repository, Tests...) for Laravel — supports both standard and modular architectures.",
+  "version": "2.0.1",
   "type": "library",
   "license": "MIT",
   "authors": [
@@ -28,11 +28,15 @@
   },
   "keywords": [
     "laravel",
+    "module",
+    "modular",
     "solid",
     "scaffold",
+    "generator",
     "repository",
     "service",
-    "generator"
+    "interface",
+    "ddd"
   ],
   "minimum-stability": "stable",
   "prefer-stable": true
