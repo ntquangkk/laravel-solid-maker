@@ -23,6 +23,8 @@ class MakeSolidScaffoldCommand extends Command
 
     protected $model;
 
+    protected $modelKebab;
+
     protected $modelPlural;
 
     protected $modelVar;
@@ -58,6 +60,7 @@ class MakeSolidScaffoldCommand extends Command
         }
 
         $this->modelVar = Str::camel($this->model);
+        $this->modelKebab = Str::kebab($this->model);
         $this->modelPlural = Str::plural($this->model);
 
         try {
@@ -421,8 +424,8 @@ class MakeSolidScaffoldCommand extends Command
         if (! $this->files->exists($path)) {
             $stub = $this->getStub('feature-test');
             $content = str_replace(
-                ['{{baseNamespaceSlash}}', '{{appNamespace}}', '{{model}}', '{{modelVar}}', '{{modelPlural}}', '{{TEST_INCOMPLETE}}', '{{AUTO_GEN_FLAG}}'],
-                [$this->baseNamespaceSlash, $this->appNamespace, $this->model, $this->modelVar, $this->modelPlural, self::TEST_INCOMPLETE, self::AUTO_GEN_FLAG],
+                ['{{baseNamespaceSlash}}', '{{appNamespace}}', '{{model}}', '{{modelVar}}', '{{modelKebab}}', '{{TEST_INCOMPLETE}}', '{{AUTO_GEN_FLAG}}'],
+                [$this->baseNamespaceSlash, $this->appNamespace, $this->model, $this->modelVar, $this->modelKebab, self::TEST_INCOMPLETE, self::AUTO_GEN_FLAG],
                 $stub
             );
 
@@ -595,21 +598,64 @@ class MakeSolidScaffoldCommand extends Command
             : base_path("routes/{$routeFile}");
 
         $routeType = $this->hasView ? 'Route::resource' : 'Route::apiResource';
-        $route = "\n" . self::AUTO_GEN_TAG . "\n{$routeType}('" . Str::snake($this->modelPlural) . "', \\{$this->appNamespace}\\Http\\Controllers\\{$this->model}Controller::class);\n";
+        $route = "\n" . self::AUTO_GEN_TAG . "\n{$routeType}('{$this->modelKebab}', {$this->model}Controller::class)->names('{$this->modelKebab}');";
+
+        // Define the use statement for the controller
+        $controllerClass = "{$this->appNamespace}\\Http\\Controllers\\{$this->model}Controller";
+        $useControllerStatement = "use {$controllerClass};";
 
         if (! $this->files->exists($routePath)) {
+            // Create new routes file with use statements and route
+            $content = "<?php\n\nuse Illuminate\Support\Facades\Route;\n{$useControllerStatement};\n{$route}";
             $this->makeDirectory($routePath);
-            $this->files->put($routePath, "<?php\n\nuse Illuminate\Support\Facades\Route;\n{$route}");
+            $this->files->put($routePath, $content);
             $this->info("Created routes file: {$routePath}");
             Log::info("Created routes file: {$routePath}");
-        } else {
-            $content = $this->files->get($routePath);
-            if (! str_contains($content, "{$this->model}Controller")) {
-                $this->files->append($routePath, $route);
-                $this->info("Appended routes to: {$routePath}");
-                Log::info("Appended routes to: {$routePath}");
+            return;
+        }
+
+        $content = $this->files->get($routePath);
+
+        // Check if the controller use statement is present
+        $lines = explode("\n", $content);
+        $hasControllerUse = false;
+        $useInsertIndex = -1;
+
+        foreach ($lines as $index => $line) {
+            if (str_contains($line, $useControllerStatement)) {
+                $hasControllerUse = true;
+                break;
+            }
+            if (preg_match('/^use\s+Illuminate\\\Support\\\Facades\\\Route;/', $line)) {
+                $useInsertIndex = $index + 1; // Insert after Route use statement
             }
         }
+
+        // Add use statement if missing
+        if (! $hasControllerUse) {
+            if ($useInsertIndex !== -1) {
+                array_splice($lines, $useInsertIndex, 0, $useControllerStatement);
+            } else {
+                // Fallback: add at the top after <?php
+                array_splice($lines, 1, 0, [$useControllerStatement, '']);
+            }
+            $content = implode("\n", $lines);
+            $this->files->put($routePath, $content);
+            $this->info("Added use statement for {$this->model}Controller in: {$routePath}");
+            Log::info("Added use statement for {$this->model}Controller in: {$routePath}");
+        }
+
+        // Check if the route is already registered
+        if (str_contains($content, "{$this->model}Controller") && str_contains($content, "'{$this->modelKebab}'")) {
+            $this->info("Route for {$this->modelKebab} already registered in: {$routePath}");
+            Log::info("Route for {$this->modelKebab} already registered in: {$routePath}");
+            return;
+        }
+
+        // Append the route
+        $this->files->append($routePath, $route);
+        $this->info("Appended route for {$this->modelKebab} to: {$routePath}");
+        Log::info("Appended route for {$this->modelKebab} to: {$routePath}");
     }
 
     protected function makeDirectory($path)

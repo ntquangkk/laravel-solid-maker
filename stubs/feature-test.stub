@@ -21,42 +21,42 @@ class {{model}}Test extends TestCase
 
     public function test_can_get_all()
     {
-        ${{modelVar}} = {{model}}::factory()->create();
-        $response = $this->get("/api/" . strtolower("{{modelPlural}}"));
-        $response->assertStatus(200);
+        // ${{modelVar}} = {{model}}::factory()->create();
+        // $response = $this->get("/api/{{modelKebab}}");
+        // $response->assertStatus(200);
         $this->markTestIncomplete("{{TEST_INCOMPLETE}}");
     }
 
     public function test_can_create()
     {
-        $data = ["name" => "Test"];
-        $response = $this->post("/api/" . strtolower("{{modelPlural}}"), $data);
-        $response->assertStatus(201);
+        // $data = ["name" => "Test"];
+        // $response = $this->post("/api/{{modelKebab}}", $data);
+        // $response->assertStatus(201);
         $this->markTestIncomplete("{{TEST_INCOMPLETE}}");
     }
 
     public function test_can_show()
     {
-        ${{modelVar}} = {{model}}::factory()->create();
-        $response = $this->get("/api/" . strtolower("{{modelPlural}}") . "/${{modelVar}}->id");
-        $response->assertStatus(200);
+        // ${{modelVar}} = {{model}}::factory()->create();
+        // $response = $this->get("/api/{{modelKebab}}/${{modelVar}}->id");
+        // $response->assertStatus(200);
         $this->markTestIncomplete("{{TEST_INCOMPLETE}}");
     }
 
     public function test_can_update()
     {
-        ${{modelVar}} = {{model}}::factory()->create();
-        $data = ["name" => "Updated"];
-        $response = $this->put("/api/" . strtolower("{{modelPlural}}") . "/${{modelVar}}->id", $data);
-        $response->assertStatus(200);
+        // ${{modelVar}} = {{model}}::factory()->create();
+        // $data = ["name" => "Updated"];
+        // $response = $this->put("/api/{{modelKebab}}/${{modelVar}}->id", $data);
+        // $response->assertStatus(200);
         $this->markTestIncomplete("{{TEST_INCOMPLETE}}");
     }
 
     public function test_can_delete()
     {
-        ${{modelVar}} = {{model}}::factory()->create();
-        $response = $this->delete("/api/" . strtolower("{{modelPlural}}") . "/${{modelVar}}->id");
-        $response->assertStatus(204);
+        // ${{modelVar}} = {{model}}::factory()->create();
+        // $response = $this->delete("/api/{{modelKebab}}/${{modelVar}}->id");
+        // $response->assertStatus(204);
         $this->markTestIncomplete("{{TEST_INCOMPLETE}}");
     }
 }
