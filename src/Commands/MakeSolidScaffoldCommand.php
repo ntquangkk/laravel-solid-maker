@@ -69,6 +69,9 @@ class MakeSolidScaffoldCommand extends Command
             $this->createAppFiles();
             $this->createServiceFiles();
             $this->createTestFiles();
+            if ($this->module) {
+                $this->registerModuleTestsInPhpunit();
+            }
             $this->registerBindings();
             $this->registerRoutes();
 
@@ -656,6 +659,88 @@ class MakeSolidScaffoldCommand extends Command
         $this->files->append($routePath, $route);
         $this->info("Appended route for {$this->modelKebab} to: {$routePath}");
         Log::info("Appended route for {$this->modelKebab} to: {$routePath}");
+    }
+
+    protected function registerModuleTestsInPhpunit()
+    {
+        $phpunitPath = base_path('phpunit.xml');
+
+        if (! $this->files->exists($phpunitPath)) {
+            $this->warn("phpunit.xml not found at {$phpunitPath}. Skipping module test registration.");
+            Log::warning("phpunit.xml not found at {$phpunitPath}. Skipping module test registration.");
+            return;
+        }
+
+        $content = $this->files->get($phpunitPath);
+
+        // Check if already registered (exact string match for simplicity)
+        if (str_contains($content, '<directory>Modules/*/tests/Unit</directory>') &&
+            str_contains($content, '<directory>Modules/*/tests/Feature</directory>')) {
+            $this->info('Module test directories already registered in phpunit.xml');
+            Log::info('Module test directories already registered in phpunit.xml');
+            return;
+        }
+
+        $lines = explode("\n", $content);
+
+        // Directories to add (with standard Laravel indentation: 12 spaces)
+        $unitDir = '            <directory>Modules/*/tests/Unit</directory>';
+        $featureDir = '            <directory>Modules/*/tests/Feature</directory>';
+
+        // Find insert positions for Unit and Feature testsuites
+        $unitInsertLine = -1;
+        $featureInsertLine = -1;
+        $inUnitSuite = false;
+        $inFeatureSuite = false;
+
+        foreach ($lines as $index => $line) {
+            $trimmedLine = trim($line);
+
+            if (strpos($trimmedLine, '<testsuite name="Unit">') === 0) {
+                $inUnitSuite = true;
+                continue;
+            }
+            if ($inUnitSuite && $trimmedLine === '</testsuite>') {
+                $unitInsertLine = $index;
+                $inUnitSuite = false;
+            }
+
+            if (strpos($trimmedLine, '<testsuite name="Feature">') === 0) {
+                $inFeatureSuite = true;
+                continue;
+            }
+            if ($inFeatureSuite && $trimmedLine === '</testsuite>') {
+                $featureInsertLine = $index;
+                $inFeatureSuite = false;
+            }
+        }
+
+        // Insert if positions found
+        $inserted = false;
+
+        if ($unitInsertLine !== -1 && !str_contains($content, '<directory>Modules/*/tests/Unit</directory>')) {
+            array_splice($lines, $unitInsertLine, 0, $unitDir);
+            $inserted = true;
+            // Adjust feature insert line if it was after unit (due to line shift)
+            if ($featureInsertLine > $unitInsertLine) {
+                $featureInsertLine++;
+            }
+        }
+
+        if ($featureInsertLine !== -1 && !str_contains($content, '<directory>Modules/*/tests/Feature</directory>')) {
+            array_splice($lines, $featureInsertLine, 0, $featureDir);
+            $inserted = true;
+        }
+
+        if ($inserted) {
+            $newContent = implode("\n", $lines);
+            $this->files->put($phpunitPath, $newContent);
+            $this->info('Registered module test directories in phpunit.xml');
+            Log::info('Registered module test directories in phpunit.xml');
+        } else {
+            $this->warn('Could not find Unit or Feature testsuite sections in phpunit.xml. Please add module directories manually.');
+            Log::warning('Could not find Unit or Feature testsuite sections in phpunit.xml. Please add module directories manually.');
+        }
     }
 
     protected function makeDirectory($path)
