@@ -279,6 +279,112 @@ class MakeSolidScaffoldCommand extends Command
             $this->files->put($path, $content);
             $this->info("Created Model: {$path}");
             Log::info("Created Model: {$path}");
+        } else {
+            $content = $this->files->get($path);
+            $lines = explode("\n", $content);
+            $hasHasFactory = false;
+            $hasNewFactory = false;
+            $classStartIndex = -1;
+            $classEndIndex = -1;
+            $useInsertIndex = -1;
+            $traitInsertIndex = -1;
+
+            // Parse the file to find class boundaries and check for HasFactory/newFactory
+            foreach ($lines as $index => $line) {
+                if (str_contains($line, 'use Illuminate\Database\Eloquent\Factories\HasFactory;')) {
+                    $hasHasFactory = true;
+                }
+                if ($this->module && str_contains($line, 'protected static function newFactory()')) {
+                    $hasNewFactory = true;
+                }
+                if (preg_match('/^class\s+' . preg_quote($this->model, '/') . '\b/', $line)) {
+                    $classStartIndex = $index;
+                    // Look for the opening brace in the same or next lines
+                    for ($i = $index; $i < count($lines); $i++) {
+                        if (preg_match('/{/', $lines[$i])) {
+                            $traitInsertIndex = $i + 1; // Insert traits after opening brace
+                            break;
+                        }
+                    }
+                }
+                if ($classStartIndex !== -1 && preg_match('/^\s*}\s*$/', $line)) {
+                    $classEndIndex = $index;
+                    break;
+                }
+                if (preg_match('/^namespace\s+[^;]+;/', $line)) {
+                    $useInsertIndex = $index + 1; // For use statements
+                }
+            }
+
+            $modified = false;
+
+            // Add HasFactory if missing
+            if (! $hasHasFactory) {
+                // Add use statement for HasFactory
+                $useStatement = 'use Illuminate\Database\Eloquent\Factories\HasFactory;';
+                if ($useInsertIndex !== -1) {
+                    array_splice($lines, $useInsertIndex, 0, $useStatement);
+                    if ($traitInsertIndex !== -1) {
+                        $traitInsertIndex++; // Adjust for inserted use statement
+                    }
+                    if ($classEndIndex !== -1) {
+                        $classEndIndex++; // Adjust for inserted use statement
+                    }
+                } else {
+                    array_splice($lines, 1, 0, [$useStatement, '']);
+                    if ($traitInsertIndex !== -1) {
+                        $traitInsertIndex += 2; // Adjust for use statement and blank line
+                    }
+                    if ($classEndIndex !== -1) {
+                        $classEndIndex += 2;
+                    }
+                }
+
+                // Add HasFactory trait inside class body
+                if ($traitInsertIndex !== -1) {
+                    // Check if there’s an existing use statement for traits
+                    $hasTraitUse = false;
+                    for ($i = $traitInsertIndex; $i < ($classEndIndex !== -1 ? $classEndIndex : count($lines)); $i++) {
+                        if (preg_match('/^\s*use\s+[^;]+;/', $lines[$i])) {
+                            $hasTraitUse = true;
+                            $lines[$i] = str_replace(';', ', HasFactory;', $lines[$i]);
+                            break;
+                        }
+                    }
+                    if (! $hasTraitUse) {
+                        array_splice($lines, $traitInsertIndex, 0, '    use HasFactory;');
+                        if ($classEndIndex !== -1) {
+                            $classEndIndex++; // Adjust for inserted trait
+                        }
+                    }
+                    $
+
+                    $modified = true;
+                    $this->info("Added HasFactory trait to: {$path}");
+                    Log::info("Added HasFactory trait to: {$path}");
+                } else {
+                    $this->warn("Could not locate class opening in {$path}. Please add HasFactory trait manually.");
+                    Log::warning("Could not locate class opening in {$path}. Please add HasFactory trait manually.");
+                }
+            }
+
+            // Add newFactory method for modules if missing
+            if ($this->module && ! $hasNewFactory && $classEndIndex !== -1) {
+                $factoryNamespace = "\\{$this->appNamespace}\\Database\\Factories\\{$this->model}Factory";
+                $newFactoryMethod = "\n    protected static function newFactory()\n    {\n        return {$factoryNamespace}::new();\n    }\n";
+                array_splice($lines, $classEndIndex, 0, $newFactoryMethod);
+                $modified = true;
+                $this->info("Added newFactory method to: {$path}");
+                Log::info("Added newFactory method to: {$path}");
+            } elseif ($this->module && ! $hasNewFactory) {
+                $this->warn("Could not locate class closing in {$path}. Please add newFactory method manually.");
+                Log::warning("Could not locate class closing in {$path}. Please add newFactory method manually.");
+            }
+
+            if ($modified) {
+                $content = implode("\n", $lines);
+                $this->files->put($path, $content);
+            }
         }
     }
 
