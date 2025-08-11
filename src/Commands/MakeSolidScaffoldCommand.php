@@ -147,7 +147,7 @@ class MakeSolidScaffoldCommand extends Command
             : database_path("migrations/{$filename}");
 
         if (! $this->files->exists($path)) {
-            $stub = $this->getStub('migration');
+            $stub = $this->getStub('database/migration');
             $content = str_replace(
                 ['{{table}}', '{{model}}', '{{AUTO_GEN_TAG}}', '{{AUTO_GEN_FLAG}}'],
                 [$table, $this->model, self::AUTO_GEN_TAG, self::AUTO_GEN_FLAG],
@@ -168,7 +168,7 @@ class MakeSolidScaffoldCommand extends Command
             : database_path("factories/{$this->model}Factory.php");
 
         if (! $this->files->exists($path)) {
-            $stub = $this->getStub('factory');
+            $stub = $this->getStub('database/factory');
             $content = str_replace(
                 ['{{baseNamespaceSlash}}', '{{appNamespace}}', '{{model}}', '{{AUTO_GEN_TAG}}', '{{AUTO_GEN_FLAG}}'],
                 [$this->baseNamespaceSlash, $this->appNamespace, $this->model, self::AUTO_GEN_TAG, self::AUTO_GEN_FLAG],
@@ -189,7 +189,7 @@ class MakeSolidScaffoldCommand extends Command
             : database_path("seeders/{$this->model}Seeder.php");
 
         if (! $this->files->exists($path)) {
-            $stub = $this->getStub('seeder');
+            $stub = $this->getStub('database/seeder');
             $content = str_replace(
                 ['{{baseNamespaceSlash}}', '{{appNamespace}}', '{{model}}', '{{AUTO_GEN_TAG}}', '{{AUTO_GEN_FLAG}}'],
                 [$this->baseNamespaceSlash, $this->appNamespace, $this->model, self::AUTO_GEN_TAG, self::AUTO_GEN_FLAG],
@@ -216,7 +216,7 @@ class MakeSolidScaffoldCommand extends Command
 
         if (! $this->files->exists($seederPath)) {
             // Create a basic DatabaseSeeder if it doesn't exist
-            $stub = $this->getStub('database-seeder');
+            $stub = $this->getStub('database/database-seeder');
             $content = str_replace(
                 ['{{baseNamespaceSlash}}', '{{appNamespace}}', '{{module}}', '{{AUTO_GEN_FLAG}}', '{{SEEDER_CALLS}}'],
                 [$this->baseNamespaceSlash, $this->appNamespace, $this->module ?? '', self::AUTO_GEN_FLAG, $seederCall],
@@ -476,7 +476,7 @@ class MakeSolidScaffoldCommand extends Command
         $path = $this->appPath . "/Repositories/Contracts/{$this->model}RepositoryInterface.php";
 
         if (! $this->files->exists($path)) {
-            $stub = $this->getStub('repository-interface');
+            $stub = $this->getStub('repositories/repository-interface');
             $content = str_replace(
                 ['{{appNamespace}}', '{{model}}', '{{AUTO_GEN_TAG}}', '{{AUTO_GEN_FLAG}}'],
                 [$this->appNamespace, $this->model, self::AUTO_GEN_TAG, self::AUTO_GEN_FLAG],
@@ -495,7 +495,7 @@ class MakeSolidScaffoldCommand extends Command
         $path = $this->appPath . "/Repositories/Eloquent/{$this->model}Repository.php";
 
         if (! $this->files->exists($path)) {
-            $stub = $this->getStub('repository');
+            $stub = $this->getStub('repositories/repository');
             $content = str_replace(
                 ['{{appNamespace}}', '{{model}}', '{{AUTO_GEN_TAG}}', '{{AUTO_GEN_FLAG}}'],
                 [$this->appNamespace, $this->model, self::AUTO_GEN_TAG, self::AUTO_GEN_FLAG],
@@ -535,7 +535,7 @@ class MakeSolidScaffoldCommand extends Command
             : base_path("tests/Feature/{$this->model}Test.php");
 
         if (! $this->files->exists($path)) {
-            $stub = $this->getStub('feature-test');
+            $stub = $this->getStub('tests/feature-test');
             $content = str_replace(
                 ['{{baseNamespaceSlash}}', '{{appNamespace}}', '{{model}}', '{{modelVar}}', '{{modelKebab}}', '{{TEST_INCOMPLETE}}', '{{AUTO_GEN_FLAG}}'],
                 [$this->baseNamespaceSlash, $this->appNamespace, $this->model, $this->modelVar, $this->modelKebab, self::TEST_INCOMPLETE, self::AUTO_GEN_FLAG],
@@ -556,7 +556,7 @@ class MakeSolidScaffoldCommand extends Command
             : base_path("tests/Unit/{$this->model}ServiceTest.php");
 
         if (! $this->files->exists($path)) {
-            $stub = $this->getStub('unit-test');
+            $stub = $this->getStub('tests/unit-test');
             $content = str_replace(
                 ['{{baseNamespaceSlash}}', '{{appNamespace}}', '{{model}}', '{{modelVar}}', '{{TEST_INCOMPLETE}}', '{{AUTO_GEN_FLAG}}'],
                 [$this->baseNamespaceSlash, $this->appNamespace, $this->model, $this->modelVar, self::TEST_INCOMPLETE, self::AUTO_GEN_FLAG],
@@ -577,7 +577,7 @@ class MakeSolidScaffoldCommand extends Command
             : app_path('Providers/RepositoryServiceProvider.php');
 
         if (! $this->files->exists($providerPath)) {
-            $stub = $this->getStub('provider');
+            $stub = $this->getStub('providers/repository-provider');
             $content = str_replace(
                 ['{{appNamespace}}', '{{BINDINGS_MARKER}}', '{{AUTO_GEN_FLAG}}'],
                 [$this->appNamespace, self::BINDINGS_MARKER, self::AUTO_GEN_FLAG],
@@ -867,7 +867,7 @@ class MakeSolidScaffoldCommand extends Command
 
         // Check if the ServiceProvider exists; if not, create it
         if (! $this->files->exists($providerPath)) {
-            $stub = $this->getStub('service-provider');
+            $stub = $this->getStub('providers/module-service-provider');
             $content = str_replace(
                 ['{{appNamespace}}', '{{module}}', '{{AUTO_GEN_FLAG}}', '{{POLICY_REGISTRATION}}'],
                 [$this->appNamespace, $this->module ?? 'App', self::AUTO_GEN_FLAG, $policyRegistration],

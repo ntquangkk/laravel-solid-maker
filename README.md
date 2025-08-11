@@ -34,13 +34,17 @@ It supports both **standard Laravel** and **modular Laravel** architectures (e.g
 - Feature Test
 
 ### Binding
-- Interface bindings:
-  - `*RepositoryServiceProvider`
-    - Registered in `bootstrap/providers.php` (for standard Laravel; first time only, if needed)
-    - Registered in `module.json` (for modular Laravel; first time only, if needed)
-- Auto-registrations:
+
+- **Interface bindings**
+  - `*RepositoryServiceProvider`  
+    - **Standard Laravel**: Register in `bootstrap/providers.php` (first-time only, if needed).  
+    - **Modular Laravel**: Register in `module.json` (first-time only, if needed).
+
+- **Auto-registrations**
   - `*DatabaseSeeder`
   - `*routes/api.php`
+  - `*Policy`
+  - `*PHPUnit` test suites
 
 ---
 
