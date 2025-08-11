@@ -74,6 +74,7 @@ class MakeSolidScaffoldCommand extends Command
             }
             $this->registerBindings();
             $this->registerRoutes();
+            $this->registerPolicy();
 
             $this->info('SOLID files generated successfully!');
             Log::info('SOLID files generated successfully for model: ' . $this->model);
@@ -464,6 +465,9 @@ class MakeSolidScaffoldCommand extends Command
             $this->files->put($path, $content);
             $this->info("Created Policy: {$path}");
             Log::info("Created Policy: {$path}");
+        } else {
+            $this->info("Policy {$this->model}Policy already exists at {$path}");
+            Log::info("Policy {$this->model}Policy already exists at {$path}");
         }
     }
 
@@ -846,6 +850,114 @@ class MakeSolidScaffoldCommand extends Command
         } else {
             $this->warn('Could not find Unit or Feature testsuite sections in phpunit.xml. Please add module directories manually.');
             Log::warning('Could not find Unit or Feature testsuite sections in phpunit.xml. Please add module directories manually.');
+        }
+    }
+
+    protected function registerPolicy()
+    {
+        // Determine the ServiceProvider path
+        $providerPath = $this->module
+            ? $this->appPath . "/Providers/{$this->module}ServiceProvider.php"
+            : app_path('Providers/AppServiceProvider.php');
+
+        // Define the Policy class and registration code
+        $policyClass = "\\{$this->appNamespace}\\Policies\\{$this->model}Policy";
+        $modelClass = "\\{$this->appNamespace}\\Models\\{$this->model}";
+        $policyRegistration = "\n        Gate::policy({$modelClass}::class, {$policyClass}::class); // AUTO-GEN-POLICY";
+
+        // Check if the ServiceProvider exists; if not, create it
+        if (! $this->files->exists($providerPath)) {
+            $stub = $this->getStub('service-provider');
+            $content = str_replace(
+                ['{{appNamespace}}', '{{module}}', '{{AUTO_GEN_FLAG}}', '{{POLICY_REGISTRATION}}'],
+                [$this->appNamespace, $this->module ?? 'App', self::AUTO_GEN_FLAG, $policyRegistration],
+                $stub
+            );
+
+            $this->makeDirectory($providerPath);
+            $this->files->put($providerPath, $content);
+            $this->info("Created ServiceProvider with Policy registration: {$providerPath}");
+            Log::info("Created ServiceProvider with Policy registration: {$providerPath}");
+            return;
+        }
+
+        // Get the ServiceProvider content
+        $content = $this->files->get($providerPath);
+
+        // Check if the Policy is already registered
+        if (str_contains($content, "{$this->model}Policy")) {
+            $this->info("Policy {$this->model}Policy already registered in {$providerPath}");
+            Log::info("Policy {$this->model}Policy already registered in {$providerPath}");
+            return;
+        }
+
+        // Check if 'use Illuminate\Support\Facades\Gate;' is present
+        $useGateStatement = "use Illuminate\Support\Facades\Gate;";
+        $lines = explode("\n", $content);
+        $hasGateUse = false;
+        $namespaceLineIndex = -1;
+        $insertUseIndex = -1;
+
+        foreach ($lines as $index => $line) {
+            if (str_contains($line, $useGateStatement)) {
+                $hasGateUse = true;
+                break;
+            }
+            if (preg_match('/^namespace\s+[^;]+;/', $line)) {
+                $namespaceLineIndex = $index;
+            }
+            if ($namespaceLineIndex !== -1 && preg_match('/^\s*$/', $line) && $insertUseIndex === -1) {
+                $insertUseIndex = $index + 1; // Insert after namespace and a blank line
+            }
+        }
+
+        // Add 'use' statement if missing
+        if (! $hasGateUse) {
+            if ($insertUseIndex !== -1) {
+                array_splice($lines, $insertUseIndex, 0, $useGateStatement);
+            } else {
+                // Fallback: add after namespace or at the start of the file
+                if ($namespaceLineIndex !== -1) {
+                    array_splice($lines, $namespaceLineIndex + 1, 0, [$useGateStatement, '']);
+                } else {
+                    array_splice($lines, 1, 0, [$useGateStatement, '']);
+                }
+                $this->warn("Added missing 'use Illuminate\Support\Facades\Gate;' to {$providerPath}");
+                Log::warning("Added missing 'use Illuminate\Support\Facades\Gate;' to {$providerPath}");
+            }
+            $content = implode("\n", $lines);
+            $this->files->put($providerPath, $content);
+        }
+
+        // Find the boot method to insert the policy registration
+        $inBootMethod = false;
+        $insertLine = -1;
+
+        $lines = explode("\n", $content); // Reload lines if modified
+        foreach ($lines as $index => $line) {
+            if (preg_match('/public function boot\(\)/', $line)) {
+                $inBootMethod = true;
+                continue;
+            }
+            if ($inBootMethod && preg_match('/^\s*}\s*$/', $line)) {
+                $insertLine = $index;
+                break;
+            }
+        }
+
+        if ($insertLine !== -1) {
+            // Insert the policy registration before the closing brace of the boot method
+            array_splice($lines, $insertLine, 0, $policyRegistration);
+            $content = implode("\n", $lines);
+            $this->files->put($providerPath, $content);
+            $this->info("Registered {$this->model}Policy in: {$providerPath}");
+            Log::info("Registered {$this->model}Policy in: {$providerPath}");
+        } else {
+            // Fallback: append to the end of the file with a warning
+            $content .= "\n" . $policyRegistration;
+            $this->files->put($providerPath, $content);
+            $this->warn("Could not locate boot method in {$providerPath}. Appended policy registration to the end. Please verify manually.");
+            Log::warning("Could not locate boot method in {$providerPath}. Appended policy registration to the end.");
         }
     }
 

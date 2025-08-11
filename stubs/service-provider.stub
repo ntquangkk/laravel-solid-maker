@@ -1,0 +1,25 @@
+<?php
+// {{AUTO_GEN_FLAG}}
+namespace {{appNamespace}}\Providers;
+
+use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\Gate;
+
+class {{module}}ServiceProvider extends ServiceProvider
+{
+    /**
+     * Register any application services.
+     */
+    public function register(): void
+    {
+        //
+    }
+
+    /**
+     * Bootstrap any application services.
+     */
+    public function boot(): void
+    {
+        {{POLICY_REGISTRATION}}
+    }
+}

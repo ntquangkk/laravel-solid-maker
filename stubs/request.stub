@@ -2,19 +2,24 @@
 {{AUTO_GEN_FLAG}}
 namespace {{appNamespace}}\Http\Requests;
 
+use {{appNamespace}}\Models\{{model}};
 use Illuminate\Foundation\Http\FormRequest;
 
 class {{type}}{{model}}Request extends FormRequest
 {
     public function authorize()
     {
-        return true;
+        // return true; // allow all for test
+
+        // Check permission via Policy
+        $target = {{model}}::findOrFail($this->route('id'));
+        return $this->user()->can('update', $target);
     }
 
     public function rules()
     {
         return [
-            "name" => ["required", "string", "max:255"],
+            "name" => ["sometimes", "string", "max:255"],
         ];
     }
 }

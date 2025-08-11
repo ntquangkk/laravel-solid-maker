@@ -2,36 +2,104 @@
 {{AUTO_GEN_FLAG}}
 namespace {{appNamespace}}\Policies;
 
-use App\Models\User;
-use {{appNamespace}}\Models\{{model}};
+use App\Models\User; // actor: default User or another Auth ~ Staff
+use {{appNamespace}}\Models\{{model}}; // target
 use Illuminate\Auth\Access\HandlesAuthorization;
+use Illuminate\Contracts\Auth\Authenticatable;
 
 class {{model}}Policy
 {
     use HandlesAuthorization;
 
-    public function viewAny(User $user)
+    /**
+     * This function runs before all other rules.
+     * If return true → ignore all remaining rules.
+     * If return false → reject all.
+     * If return null → continue checking the specific rule.
+     */
+    public function before(Authenticatable $actor, $ability)
     {
+        // If Staff and is super admin → allow all
+        // if ($actor instanceof Staff && $actor->is_super_admin) {
+        //     return true;
+        // }
+
+        return null;
+    }
+
+    /**
+     * Can the actor view the {{model}} list?
+     */
+    public function viewAny(Authenticatable $actor)
+    {
+        // If Staff and is super admin → allow all
+        // if ($actor instanceof Staff && $actor->is_super_admin) {
+        //     return true;
+        // }
+
+        // The actor cannot see the list
         return false;
     }
 
-    public function view(User $user, {{model}} ${{modelVar}})
+    /**
+     * Can the actor view this {{model}}?
+     */
+    public function view(Authenticatable $actor, {{model}} $target)
     {
+        // If Staff and is super admin → allow all
+        // if ($actor instanceof Staff && $actor->is_super_admin) {
+        //     return true;
+        // }
+
+        // The actor only sees itself
+        // if ($actor instanceof User) {
+        //     return $actor->id === $target->id;
+        // }
+
         return false;
     }
 
-    public function create(User $user)
+    /**
+     * Can the actor create new {{model}}?
+     */
+    public function create(Authenticatable $actor)
     {
+        // If Staff and is super admin → allow all
+        // if ($actor instanceof Staff && $actor->is_super_admin) {
+        //     return true;
+        // }
+
         return false;
     }
 
-    public function update(User $user, {{model}} ${{modelVar}})
+    /**
+     * Can the actor update this {{model}}?
+     */
+    public function update(Authenticatable $actor, {{model}} $target)
     {
+        // If Staff and is super admin → allow all
+        // if ($actor instanceof Staff && $actor->is_super_admin) {
+        //     return true;
+        // }
+
+        // The actor only updates itself
+        // if ($actor instanceof User) {
+        //     return $actor->id === $target->id;
+        // }
+
         return false;
     }
 
-    public function delete(User $user, {{model}} ${{modelVar}})
+    /**
+     * Can the actor delete this {{model}}?
+     */
+    public function delete(Authenticatable $actor, {{model}} $target)
     {
+        // If Staff and is super admin → allow all
+        // if ($actor instanceof Staff && $actor->is_super_admin) {
+        //     return true;
+        // }
+
         return false;
     }
 }
