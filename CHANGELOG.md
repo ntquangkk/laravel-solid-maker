@@ -1,5 +1,18 @@
 # Changelog
 
+## [2.1.1] - 2025-08-20
+
+### Added
+- `module-service-provider.stub`.
+- Create placeholder `Contracts` folder in `<appPath>\Services`:
+
+### Changed
+- Change path of repository:
+  - From `<appPath>\Repositories\Eloquent`
+  - To `<appPath>\Repositories`
+- Updated `README.md`.
+
+
 ## [2.1.0] - 2025-08-11
 
 ### Added

@@ -1,6 +1,6 @@
 <?php
 {{AUTO_GEN_FLAG}}
-namespace {{appNamespace}}\Repositories\Eloquent;
+namespace {{appNamespace}}\Repositories;
 
 use {{appNamespace}}\Models\{{model}};
 use {{appNamespace}}\Repositories\Contracts\{{model}}RepositoryInterface;

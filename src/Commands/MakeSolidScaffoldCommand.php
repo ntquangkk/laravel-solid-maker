@@ -127,6 +127,7 @@ class MakeSolidScaffoldCommand extends Command
     {
         $this->createRepositoryInterface();
         $this->createRepository();
+        $this->ensureServiceContractsDirectory();
         $this->createService();
     }
 
@@ -492,7 +493,7 @@ class MakeSolidScaffoldCommand extends Command
 
     protected function createRepository()
     {
-        $path = $this->appPath . "/Repositories/Eloquent/{$this->model}Repository.php";
+        $path = $this->appPath . "/Repositories/{$this->model}Repository.php";
 
         if (! $this->files->exists($path)) {
             $stub = $this->getStub('repositories/repository');
@@ -506,6 +507,17 @@ class MakeSolidScaffoldCommand extends Command
             $this->files->put($path, $content);
             $this->info("Created Repository: {$path}");
             Log::info("Created Repository: {$path}");
+        }
+    }
+
+    protected function ensureServiceContractsDirectory()
+    {
+        $directory = $this->appPath . '/Services/Contracts';
+
+        if (! $this->files->exists($directory)) {
+            $this->files->makeDirectory($directory, 0755, true, true);
+            $this->info("Created directory: {$directory}");
+            Log::info("Created directory: {$directory}");
         }
     }
 
@@ -591,7 +603,7 @@ class MakeSolidScaffoldCommand extends Command
 
         $bindings = "\n        \$this->app->bind(\n" .
                     "            \\{$this->appNamespace}\\Repositories\\Contracts\\{$this->model}RepositoryInterface::class,\n" .
-                    "            \\{$this->appNamespace}\\Repositories\\Eloquent\\{$this->model}Repository::class\n" .
+                    "            \\{$this->appNamespace}\\Repositories\\{$this->model}Repository::class\n" .
                     '        );';
 
         $content = $this->files->get($providerPath);

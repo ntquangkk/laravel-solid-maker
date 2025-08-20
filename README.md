@@ -115,46 +115,48 @@ This will generate and register:
 Create `Post` SOLID scaffold in `Modules\Blog`
 
 ```bash
-Modules
-└── Blog
-    ├── app
-    │   ├── Http
-    │   │   ├── Controllers
-    │   │   │   └── PostController.php
-    │   │   ├── Requests
-    │   │   │   ├── StorePostRequest.php
-    │   │   │   └── UpdatePostRequest.php
-    │   │   └── Resources
-    │   │       └── PostResource.php
-    │   ├── Models
-    │   │   └── Post.php
-    │   ├── Policies
-    │   │   └── PostPolicy.php
-    │   ├── Providers
-    │   │   └── RepositoryServiceProvider.php          // register or create
-    │   ├── Repositories
-    │   │   ├── Contracts
-    │   │   │   └── PostRepositoryInterface.php
-    │   │   └── Eloquent
-    │   │       └── PostRepository.php
-    │   └── Services
-    │       └── PostService.php
-    ├── database
-    │   ├── factories
-    │   │   └── PostFactory.php
-    │   ├── migrations
-    │   │   └── YYYY_mm_dd_His_create_posts_table.php
-    │   └── seeders
-    │       ├── BlogDatabaseSeeder.php                  // register or create
-    │       └── PostSeeder.php
-    ├── module.json                                     // register or create
-    ├── routes
-    │   └── api.php                                     // register or create
-    └── tests
-        ├── Feature
-        │   └── PostTest.php
-        └── Unit
-            └── PostServiceTest.php
+Project
+├── phpunit.xml                                             // register if exists
+└── Modules
+    └── Blog
+        ├── app
+        │   ├── Http
+        │   │   ├── Controllers
+        │   │   │   └── PostController.php
+        │   │   ├── Requests
+        │   │   │   ├── StorePostRequest.php
+        │   │   │   └── UpdatePostRequest.php
+        │   │   └── Resources
+        │   │       └── PostResource.php
+        │   ├── Models
+        │   │   └── Post.php
+        │   ├── Policies
+        │   │   └── PostPolicy.php
+        │   ├── Providers
+        │   │   ├── BlogServiceProvider.php                // register or create
+        │   │   └── RepositoryServiceProvider.php          // register or create
+        │   ├── Repositories
+        │   │   ├── Contracts
+        │   │   │   └── PostRepositoryInterface.php
+        │   │   └── PostRepository.php
+        │   └── Services
+        │       └── PostService.php
+        ├── database
+        │   ├── factories
+        │   │   └── PostFactory.php
+        │   ├── migrations
+        │   │   └── YYYY_mm_dd_His_create_posts_table.php
+        │   └── seeders
+        │       ├── BlogDatabaseSeeder.php                  // register or create
+        │       └── PostSeeder.php
+        ├── module.json                                     // register or create
+        ├── routes
+        │   └── api.php                                     // register or create
+        └── tests
+            ├── Feature
+            │   └── PostTest.php
+            └── Unit
+                └── PostServiceTest.php
 ```
 
 ---
